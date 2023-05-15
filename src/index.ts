@@ -40,55 +40,17 @@ router.post('/', async (request, env) => {
     });
   }
   if (message.type === InteractionType.APPLICATION_COMMAND) {
-    //handle slash commands
-    switch (message.data.name.toLowerCase()) {
-      case commands[0].name.toLowerCase(): {
-        return new JsonResponse({
-          type: 4,
-          data: {
-            content: 'pong',
-          },
-        });
-      }
-      case commands[1].name.toLowerCase(): {
-        return new JsonResponse({
-          type: 4,
-          data: {
-            content: 'ヘルプはこちら\n(https://github.com/BuntinJP/badcompany)',
-          },
-        });
-      }
-      case commands[2].name.toLowerCase(): {
-        return new JsonResponse({
-          type: 4,
-          data: {
-            content: 'Hello, Cloudflare Worker!',
-          },
-        });
-      }
-      case commands[3].name.toLowerCase(): {
-        const imageUrl = await getImageUrl(testurl);
-        return new JsonResponse({
-          type: 4,
-          data: {
-            content: imageUrl,
-          },
-        });
-      }
-      case commands[4].name.toLowerCase(): {
-        const applicationId = env.DISCORD_APPLICATION_ID;
-        const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${applicationId}&scope=applications.commands`;
-        return new JsonResponse({
-          type: 4,
-          data: {
-            content: INVITE_URL,
-            flags: 64,
-          },
-        });
-      }
-      default:
-        console.error('Unknown Command');
-        return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
+    const command = commands.find(
+      (cmd) => cmd.name.toLowerCase() === message.data.name.toLowerCase()
+    );
+
+    if (command && command.action) {
+      console.log(`Handling command: ${command.name}`);
+      const response = await command.action(env);
+      return new JsonResponse(response);
+    } else {
+      console.error('Unknown command');
+      return new JsonResponse({ error: 'Unknown command' }, { status: 400 });
     }
   }
   console.error('Unknown Type');
