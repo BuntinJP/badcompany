@@ -1,8 +1,8 @@
 /**
- * discordに登録するコマンドの集合
+ * @file discordに登録するコマンドの集合
  */
 
-export const commands = [
+const commands = [
   {
     name: 'ping',
     description: 'ping pong',
@@ -11,4 +11,18 @@ export const commands = [
     name: 'help',
     description: 'ヘルプを表示します',
   },
+  {
+    name: 'hello',
+    description: '挨拶します',
+  },
+  {
+    name: 'hnti',
+    description: '^^',
+  },
+  {
+    name: 'invite',
+    description: 'このbotを招待します',
+  },
 ];
+
+export { commands };

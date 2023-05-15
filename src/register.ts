@@ -1,10 +1,8 @@
 /**
- * This file is meant to be run from the command line, and is not used by the
- * application server.  It's allowed to use node.js primitives, and only needs
- * to be run once.
+ * @fileoverview
+ * DiscordAPIで、commands.tsに定義されたコマンドを登録する
  */
 
-/* eslint-disable no-undef */
 import fs from 'fs';
 import { commands } from './commands.js';
 
@@ -12,8 +10,7 @@ const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 
 const token = config.token;
 const applicationId = config.appId;
-const testGuildId = config.testGuildId;
-
+//必要情報のチェック
 if (!token) {
   throw new Error('The DISCORD_TOKEN environment variable is required.');
 }
@@ -23,40 +20,10 @@ if (!applicationId) {
   );
 }
 
-/* 
-// eslint-disable-next-line no-unused-vars
-async function registerGuildCommands() {
-  if (!testGuildId) {
-    throw new Error(
-      'The DISCORD_TEST_GUILD_ID environment variable is required.'
-    );
-  }
-  const url = `https://discord.com/api/v10/applications/${applicationId}/guilds/${testGuildId}/commands`;
-  const res = await registerCommands(url);
-  const json = await res.json();
-  console.log(json);
-  json.forEach(async (cmd) => {
-    const response = await fetch(
-      `https://discord.com/api/v10/applications/${applicationId}/guilds/${testGuildId}/commands/${cmd.id}`
-    );
-    if (!response.ok) {
-      console.error(`Problem removing command ${cmd.id}`);
-    }
-  });
-}
-*/
-
-/**
- * Register all commands globally.  This can take o(minutes), so wait until
- * you're sure these are the commands you want.
- */
-// eslint-disable-next-line no-unused-vars
-async function registerGlobalCommands() {
+(async () => {
   const url = `https://discord.com/api/v10/applications/${applicationId}/commands`;
-  await registerCommands(url);
-}
-
-async function registerCommands(url: string) {
+  console.log('Registering commands');
+  console.log(commands);
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -74,7 +41,4 @@ async function registerCommands(url: string) {
     console.error(text);
   }
   return response;
-}
-
-await registerGlobalCommands();
-// await registerGuildCommands();
+})();

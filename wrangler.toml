@@ -2,7 +2,4 @@ name = "badcompany"
 main = "src/index.ts"
 compatibility_date = "2023-05-13"
 usage_model = "bundled"
-env = { }
 
-[triggers]
-crons = [ ]
