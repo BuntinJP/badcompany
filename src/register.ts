@@ -6,7 +6,7 @@
 
 /* eslint-disable no-undef */
 import fs from 'fs';
-import {commands} from './commands.js';
+import { commands } from './commands.js';
 
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 
@@ -23,10 +23,7 @@ if (!applicationId) {
   );
 }
 
-/**
- * Register all commands with a specific guild/server. Useful during initial
- * development and testing.
- */
+/* 
 // eslint-disable-next-line no-unused-vars
 async function registerGuildCommands() {
   if (!testGuildId) {
@@ -47,6 +44,7 @@ async function registerGuildCommands() {
     }
   });
 }
+*/
 
 /**
  * Register all commands globally.  This can take o(minutes), so wait until
@@ -58,7 +56,7 @@ async function registerGlobalCommands() {
   await registerCommands(url);
 }
 
-async function registerCommands(url) {
+async function registerCommands(url: string) {
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',

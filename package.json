@@ -13,6 +13,6 @@
   "scripts": {
     "start": "wrangler dev",
     "deploy": "wrangler publish",
-    "register":"node src/register.js"
+    "register": "yarn node --loader ts-node/esm ./src/register.ts"
   }
 }
