@@ -2,13 +2,13 @@ import { getImageUrl } from './reddit';
 
 const testurl = 'https://www.reddit.com/r/FutaCum/hot.json';
 
-interface Command {
+export interface Command {
   name: string;
   description: string;
   action?: (env: any) => Promise<any>;
 }
 
-const commands: Command[] = [
+export const commands: Command[] = [
   {
     name: 'ping',
     description: 'ping pong',
@@ -67,7 +67,16 @@ const commands: Command[] = [
       };
     },
   },
+  {
+    name: 'me-directory',
+    description: 'manga-eaterサーバーのディレクトリ一覧を返します。',
+    action: async () => {
+      return {
+        type: 4,
+        data: {
+          content: 'https://manga-eater.com/directory',
+        },
+      };
+    },
+  },
 ];
-
-export { commands };
-export type { Command };
