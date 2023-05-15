@@ -9,9 +9,6 @@ import {
   verifyKey,
 } from 'discord-interactions';
 import { commands } from './commands';
-import { getImageUrl } from './reddit';
-
-const testurl = 'https://www.reddit.com/r/FutaCum/hot.json';
 
 class JsonResponse extends Response {
   constructor(body: any, init?: ResponseInit) {
@@ -43,7 +40,6 @@ router.post('/', async (request, env) => {
     const command = commands.find(
       (cmd) => cmd.name.toLowerCase() === message.data.name.toLowerCase()
     );
-
     if (command && command.action) {
       console.log(`Handling command: ${command.name}`);
       const response = await command.action(env);
