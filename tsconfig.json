@@ -9,7 +9,8 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": false,
-    "noEmit": true,
+    "outDir": "./dist", // 追加
+    "rootDir": "./src", // 追加（ソースコードがこのディレクトリにあると仮定します）
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -17,7 +18,9 @@
     "skipLibCheck": true
   },
   "ts-node": {
-    "esm": true,
-    "require": ["tsconfig-paths/register"]
-  }
+    "esm": true
+    //"require": ["tsconfig-paths/register"]
+  },
+  "include": ["src/**/*"], // 追加
+  "exclude": ["node_modules"] // 追加
 }

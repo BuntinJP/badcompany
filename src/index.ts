@@ -8,7 +8,13 @@ import {
   InteractionType,
   verifyKey,
 } from 'discord-interactions';
-import { commands } from './commands';
+import { commandsWithAction } from './commandsActions';
+
+export interface Command {
+  name: string;
+  description: string;
+  action?: (env: any) => Promise<any>;
+}
 
 class JsonResponse extends Response {
   constructor(body: any, init?: ResponseInit) {
@@ -37,7 +43,7 @@ router.post('/', async (request, env) => {
     });
   }
   if (message.type === InteractionType.APPLICATION_COMMAND) {
-    const command = commands.find(
+    const command = commandsWithAction.find(
       (cmd) => cmd.name.toLowerCase() === message.data.name.toLowerCase()
     );
     if (command && command.action) {
