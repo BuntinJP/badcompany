@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 
 export const commands: SlashCommandBuilder[] = [
-  new SlashCommandBuilder().setName('ping').setDescription('ping pong'),
+  new SlashCommandBuilder().setName('info').setDescription('botに関する情報を表示します。'),
   new SlashCommandBuilder()
     .setName('help')
     .setDescription('ヘルプを表示します'),

@@ -5,12 +5,16 @@
     "jsx": "react",
     "module": "ESNext",
     "moduleResolution": "node",
-    "types": ["@cloudflare/workers-types", "node"],
+    "types": [
+      "@cloudflare/workers-types",
+      "node",
+      "./worker-configuration.d.ts"
+    ],
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": false,
-    "outDir": "./dist", // 追加
-    "rootDir": "./src", // 追加（ソースコードがこのディレクトリにあると仮定します）
+    "outDir": "./dist",
+    "rootDir": "./src",
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,9 +22,10 @@
     "skipLibCheck": true
   },
   "ts-node": {
-    "esm": true
-    //"require": ["tsconfig-paths/register"]
+    "esm": true,
+    "require": ["tsconfig-paths/register"],
+    "experimentalSpecifierResolution": "node"
   },
-  "include": ["src/**/*"], // 追加
-  "exclude": ["node_modules"] // 追加
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

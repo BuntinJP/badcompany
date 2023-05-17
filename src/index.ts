@@ -3,18 +3,28 @@
  */
 
 import { Router } from 'itty-router';
-import {
-  InteractionResponseType,
-  InteractionType,
-  verifyKey,
-} from 'discord-interactions';
+import { verifyKey } from 'discord-interactions';
 import { commandsWithAction } from './commandsActions';
 import { SlashCommandBuilder } from 'discord.js';
+import {
+  APIBaseInteraction,
+  APIChatInputApplicationCommandInteractionData,
+  InteractionType,
+  InteractionResponseType,
+  APIApplicationCommandInteractionDataOption
+} from 'discord.js';
+
+type Interaction = APIBaseInteraction<
+  InteractionType,
+  APIChatInputApplicationCommandInteractionData
+>;
 
 export interface Command {
   entity: SlashCommandBuilder;
-  action?: (env: any) => Promise<any>;
+  action?: CommandAction;
 }
+export type CommandAction = (env: Env, option?: APIApplicationCommandInteractionDataOption[]) => Promise<any>;
+
 
 class JsonResponse extends Response {
   constructor(body: any, init?: ResponseInit) {
@@ -27,31 +37,29 @@ class JsonResponse extends Response {
     super(jsonBody, init);
   }
 }
+
 const router = Router();
 
 router.get('/', (request, env) => {
   return new Response(`👋 ${env.DISCORD_APPLICATION_ID}`);
 });
 
-router.post('/', async (request, env) => {
-  const message = await request.json();
-  console.log(message);
-  if (message.type === InteractionType.PING) {
+router.post('/', async (request, env: Env) => {
+  const interaction: Interaction = await request.json();
+  if (interaction.type === InteractionType.Ping) {
     console.log('Handling Ping request');
     return new JsonResponse({
-      type: InteractionResponseType.PONG,
+      type: InteractionResponseType.Pong,
     });
   }
-  if (message.type === InteractionType.APPLICATION_COMMAND) {
-    // コマンドの処理
+  if (interaction.type === InteractionType.ApplicationCommand) {
     const command = commandsWithAction.find(
-      (cmd) => cmd.entity.name.toLowerCase() === message.data.name.toLowerCase()
+      (c) => c.entity.name.toLowerCase() === interaction.data?.name.toLowerCase()
     );
     if (command && command.action) {
       //コマンド実行
       console.log(`Handling command: ${command.entity.name}`);
-      const response = await command.action(env);
-      return new JsonResponse(response);
+      return new JsonResponse(await command.action(env, interaction.data?.options));
     } else {
       //コマンドなし
       console.error('Unknown command');
@@ -65,7 +73,7 @@ router.post('/', async (request, env) => {
 router.all('*', () => new Response('Not Found', { status: 404 }));
 
 export default {
-  async fetch(request: Request, env: any) {
+  async fetch(request: Request, env: Env) {
     const signature = request.headers.get('X-Signature-Ed25519') || '';
     const timestamp = request.headers.get('X-Signature-Timestamp') || '';
     const body = await request.clone().arrayBuffer();

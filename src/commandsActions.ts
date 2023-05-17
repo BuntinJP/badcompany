@@ -1,5 +1,5 @@
 import { getImageUrl } from './reddit';
-import { Command } from './index';
+import { Command,CommandAction } from './index';
 import { commands } from './commands';
 
 import * as dc from './discordUtils';
@@ -15,12 +15,13 @@ interface DirectoryOutbound {
 
 const testurl = 'https://www.reddit.com/r/EGirls/hot.json';
 
-const actions: ((env: any) => Promise<any>)[] = [
-  //ping
-  async () => ({
+const info = `mode:"production"|"develop" => "debug\nserver:string => "manga.buntin.xyz\nstate:string => "running"\nversion:string => "0.0.1"\nuptime:string => "0:00:00"\n`;
+const actions: CommandAction[] = [
+  //info
+  async (env) => ({
     type: 4,
     data: {
-      content: 'pong',
+      content: info,
     },
   }),
   //help
