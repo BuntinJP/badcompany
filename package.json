@@ -14,13 +14,12 @@
   "scripts": {
     "start": "wrangler dev",
     "deploy": "wrangler publish",
-    "register":"ts-node ./src/register.ts",
+    "register": "ts-node ./src/register.ts",
     "remove": "ts-node ./src/commandRemove.ts",
-    "test":"ts-node ./src/test.ts"
+    "test": "ts-node ./src/test.ts"
   },
   "dependencies": {
     "discord-api-types": "^0.37.42",
-    "discord-interaction": "^1.0.2",
     "discord-interactions": "^3.4.0",
     "embed-table": "^4.2.3",
     "itty-router": "^3.0.12",

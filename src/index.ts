@@ -9,10 +9,10 @@ import {
   verifyKey,
 } from 'discord-interactions';
 import { commandsWithAction } from './commandsActions';
+import { SlashCommandBuilder } from 'discord.js';
 
 export interface Command {
-  name: string;
-  description: string;
+  entity: SlashCommandBuilder;
   action?: (env: any) => Promise<any>;
 }
 
@@ -43,14 +43,17 @@ router.post('/', async (request, env) => {
     });
   }
   if (message.type === InteractionType.APPLICATION_COMMAND) {
+    // コマンドの処理
     const command = commandsWithAction.find(
-      (cmd) => cmd.name.toLowerCase() === message.data.name.toLowerCase()
+      (cmd) => cmd.entity.name.toLowerCase() === message.data.name.toLowerCase()
     );
     if (command && command.action) {
-      console.log(`Handling command: ${command.name}`);
+      //コマンド実行
+      console.log(`Handling command: ${command.entity.name}`);
       const response = await command.action(env);
       return new JsonResponse(response);
     } else {
+      //コマンドなし
       console.error('Unknown command');
       return new JsonResponse({ error: 'Unknown command' }, { status: 400 });
     }
