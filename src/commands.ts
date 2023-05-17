@@ -15,7 +15,7 @@ export const commands: Command[] = [
   },
   {
     name: 'hnti',
-    description: '^^',
+    description: 'E-Girlガチャ',
   },
   {
     name: 'invite',

@@ -14,8 +14,9 @@
   "scripts": {
     "start": "wrangler dev",
     "deploy": "wrangler publish",
-    "register": "tsc -p tsconfig-register.json",
-    "remove": "ts-node ./src/commandRemove.ts"
+    "register":"ts-node ./src/register.ts",
+    "remove": "ts-node ./src/commandRemove.ts",
+    "test":"ts-node ./src/test.ts"
   },
   "dependencies": {
     "discord-api-types": "^0.37.42",
