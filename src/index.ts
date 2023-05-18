@@ -6,16 +6,10 @@ import { Router } from 'itty-router';
 import { verifyKey } from 'discord-interactions';
 import { commandsWithAction } from './commandsActions';
 import {
-  APIBaseInteraction,
-  APIChatInputApplicationCommandInteractionData,
   InteractionType,
   InteractionResponseType,
 } from 'discord-api-types/v10';
-
-type Interaction = APIBaseInteraction<
-  InteractionType,
-  APIChatInputApplicationCommandInteractionData
->;
+import { Interaction } from './types';
 
 class JsonResponse extends Response {
   constructor(body: any, init?: ResponseInit) {

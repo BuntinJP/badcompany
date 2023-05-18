@@ -1,8 +1,8 @@
-import { getImageUrl } from './reddit';
+import { getImageUrl } from './utils/reddit';
 import { Command, CommandAction } from './types';
 import { commands } from './commands';
 
-import * as dc from './discordUtils';
+import * as dc from './utils/discordUtils';
 
 interface Archive {
   title: string;
