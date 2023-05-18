@@ -1,5 +1,5 @@
 import { getImageUrl } from './reddit';
-import { Command,CommandAction } from './index';
+import { Command, CommandAction } from './types';
 import { commands } from './commands';
 
 import * as dc from './discordUtils';
@@ -73,15 +73,25 @@ const actions: CommandAction[] = [
       },
     };
   },
-  //me-directory
-  async () => {
-    const directory: DirectoryOutbound = await (
-      await fetch('https://manga.buntin.xyz/directory')
-    ).json();
+  //me-title
+  async (env, options) => {
+    if (!options) {
+      console.log('optionsがありません');
+      return {
+        type: 4,
+        data: {
+          content: 'optionsがありません',
+        },
+      };
+    } else {
+      console.log('options');
+      console.log(options);
+    }
     return {
       type: 4,
       data: {
-        content: 'https://manga-eater.com/directory',
+        content:
+          'command: me-title\n payload:\n' + JSON.stringify(options, null, 2),
       },
     };
   },

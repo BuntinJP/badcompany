@@ -21,9 +21,6 @@ if (!applicationId) {
 }
 
 (async () => {
-  const t = commands.map((command) => {
-    return command.toJSON();
-  });
   const url = `https://discord.com/api/v10/applications/${applicationId}/commands`;
   console.log('Registering commands');
   console.log(commands);
@@ -33,7 +30,7 @@ if (!applicationId) {
       Authorization: `Bot ${token}`,
     },
     method: 'PUT',
-    body: JSON.stringify(t),
+    body: JSON.stringify(commands),
   });
 
   if (response.ok) {

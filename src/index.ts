@@ -5,28 +5,17 @@
 import { Router } from 'itty-router';
 import { verifyKey } from 'discord-interactions';
 import { commandsWithAction } from './commandsActions';
-import { SlashCommandBuilder } from 'discord.js';
 import {
   APIBaseInteraction,
   APIChatInputApplicationCommandInteractionData,
   InteractionType,
   InteractionResponseType,
-  APIApplicationCommandInteractionDataOption,
 } from 'discord-api-types/v10';
 
 type Interaction = APIBaseInteraction<
   InteractionType,
   APIChatInputApplicationCommandInteractionData
 >;
-
-export interface Command {
-  entity: SlashCommandBuilder;
-  action?: CommandAction;
-}
-export type CommandAction = (
-  env: Env,
-  option?: APIApplicationCommandInteractionDataOption[]
-) => Promise<any>;
 
 class JsonResponse extends Response {
   constructor(body: any, init?: ResponseInit) {
