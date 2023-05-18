@@ -7,7 +7,6 @@
     "@cloudflare/workers-types": "^4.20230511.0",
     "@types/node": "^20.1.4",
     "discord-api-types": "^0.37.42",
-    "discord.js": "^14.11.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4",
     "wrangler": "^2.20.0"
@@ -23,6 +22,7 @@
   },
   "dependencies": {
     "discord-interactions": "^3.4.0",
+    "discord.js": "^14.11.0",
     "itty-router": "^3.0.12"
   },
   "main": "index.ts",

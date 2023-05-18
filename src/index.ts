@@ -11,8 +11,8 @@ import {
   APIChatInputApplicationCommandInteractionData,
   InteractionType,
   InteractionResponseType,
-  APIApplicationCommandInteractionDataOption
-} from 'discord.js';
+  APIApplicationCommandInteractionDataOption,
+} from 'discord-api-types/v10';
 
 type Interaction = APIBaseInteraction<
   InteractionType,
@@ -23,8 +23,10 @@ export interface Command {
   entity: SlashCommandBuilder;
   action?: CommandAction;
 }
-export type CommandAction = (env: Env, option?: APIApplicationCommandInteractionDataOption[]) => Promise<any>;
-
+export type CommandAction = (
+  env: Env,
+  option?: APIApplicationCommandInteractionDataOption[]
+) => Promise<any>;
 
 class JsonResponse extends Response {
   constructor(body: any, init?: ResponseInit) {
@@ -53,13 +55,17 @@ router.post('/', async (request, env: Env) => {
     });
   }
   if (interaction.type === InteractionType.ApplicationCommand) {
+    //コマンド処理
     const command = commandsWithAction.find(
-      (c) => c.entity.name.toLowerCase() === interaction.data?.name.toLowerCase()
+      (c) =>
+        c.entity.name.toLowerCase() === interaction.data?.name.toLowerCase()
     );
     if (command && command.action) {
       //コマンド実行
       console.log(`Handling command: ${command.entity.name}`);
-      return new JsonResponse(await command.action(env, interaction.data?.options));
+      return new JsonResponse(
+        await command.action(env, interaction.data?.options)
+      );
     } else {
       //コマンドなし
       console.error('Unknown command');
