@@ -1,20 +1,19 @@
 import {
-  RESTPostAPIChatInputApplicationCommandsJSONBody,
-  APIApplicationCommandInteractionDataOption,
   APIBaseInteraction,
   APIChatInputApplicationCommandInteractionData,
   RESTPostAPIApplicationCommandsJSONBody,
   InteractionType,
+  RESTPostAPIInteractionCallbackJSONBody,
+  APIModalInteractionResponseCallbackData,
 } from 'discord-api-types/v10';
 
-export type Options = APIApplicationCommandInteractionDataOption[];
+//export type Options = APIApplicationCommandInteractionDataOption[];
 
 export type CommandEntity = RESTPostAPIApplicationCommandsJSONBody;
 export type CommandAction = (
   env: Env,
-  option?: Options,
   data?: APIChatInputApplicationCommandInteractionData
-) => Promise<any>;
+) => Promise<RESTPostAPIInteractionCallbackJSONBody>;
 
 export interface Command {
   entity: CommandEntity;
@@ -25,3 +24,5 @@ export type Interaction = APIBaseInteraction<
   InteractionType,
   APIChatInputApplicationCommandInteractionData
 >;
+
+export type Unko = APIModalInteractionResponseCallbackData;

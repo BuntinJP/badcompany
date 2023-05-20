@@ -1,0 +1,28 @@
+{
+  "custom_id": "myModal",
+  "title": "My Modal",
+  "components": [
+    {
+      "type": 1,
+      "components": [
+        {
+          "type": 4,
+          "custom_id": "favoriteColorInput",
+          "label": "What's your favorite color?",
+          "style": 1
+        }
+      ]
+    },
+    {
+      "type": 1,
+      "components": [
+        {
+          "type": 4,
+          "custom_id": "hobbiesInput",
+          "label": "What's some of your favorite hobbies?",
+          "style": 2
+        }
+      ]
+    }
+  ]
+}

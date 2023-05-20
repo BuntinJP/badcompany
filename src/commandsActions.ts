@@ -1,6 +1,12 @@
 import { getImageUrl } from './utils/reddit';
 import { Command, CommandAction } from './types';
 import { commands } from './commands';
+//import { ModalBuilder } from 'discord.js';
+import * as testModal from './modals/testModal.json';
+import { Unko } from './types';
+
+const msg = 4;
+const modal = 9;
 
 import * as dc from './utils/discordUtils';
 
@@ -19,21 +25,21 @@ const info = `mode:"production"|"develop" => "debug\nserver:string => "manga.bun
 const actions: CommandAction[] = [
   //info
   async (env) => ({
-    type: 4,
+    type: msg,
     data: {
       content: info,
     },
   }),
   //help
   async () => ({
-    type: 4,
+    type: msg,
     data: {
       content: 'ヘルプはこちら\n(https://github.com/BuntinJP/badcompany)',
     },
   }),
   //hello
   async () => ({
-    type: 4,
+    type: msg,
     data: {
       content: 'Hello, Cloudflare Worker!',
     },
@@ -42,7 +48,7 @@ const actions: CommandAction[] = [
   async () => {
     const imageUrl = await getImageUrl(testurl);
     return {
-      type: 4,
+      type: msg,
       data: {
         content: imageUrl,
       },
@@ -53,7 +59,7 @@ const actions: CommandAction[] = [
     const applicationId = env.DISCORD_APPLICATION_ID;
     const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${applicationId}&scope=applications.commands`;
     return {
-      type: 4,
+      type: msg,
       data: {
         content: INVITE_URL,
         flags: 64,
@@ -67,7 +73,7 @@ const actions: CommandAction[] = [
     ).json();
     const titles = directory.titles;
     return {
-      type: 4,
+      type: msg,
       data: {
         content: dc.genTable(titles),
       },
@@ -76,7 +82,7 @@ const actions: CommandAction[] = [
   //me-title
   async (env, options) => {
     return {
-      type: 4,
+      type: msg,
       data: {
         content:
           'command: me-title\n payload:\n' + JSON.stringify(options, null, 2),
@@ -84,13 +90,11 @@ const actions: CommandAction[] = [
     };
   },
   //modal-test
-  async (env, options) => {
+  async () => {
+    const tt: Unko = testModal;
     return {
-      type: 4,
-      data: {
-        content:
-          'command: modal-test\n payload:\n' + JSON.stringify(options, null, 2),
-      },
+      type: modal,
+      data: tt,
     };
   },
 ];
