@@ -3,7 +3,7 @@ import { Command, CommandAction } from './types';
 import { commands } from './commands';
 //import { ModalBuilder } from 'discord.js';
 import * as testModal from './modals/testModal.json';
-import { Unko } from './types';
+import { Modaldata } from './types';
 
 const msg = 4;
 const modal = 9;
@@ -91,7 +91,7 @@ const actions: CommandAction[] = [
   },
   //modal-test
   async () => {
-    const tt: Unko = testModal;
+    const tt: Modaldata = testModal;
     return {
       type: modal,
       data: tt,

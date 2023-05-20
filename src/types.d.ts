@@ -25,4 +25,4 @@ export type Interaction = APIBaseInteraction<
   APIChatInputApplicationCommandInteractionData
 >;
 
-export type Unko = APIModalInteractionResponseCallbackData;
+export type Modaldata = APIModalInteractionResponseCallbackData;
