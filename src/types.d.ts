@@ -3,13 +3,18 @@ import {
   APIApplicationCommandInteractionDataOption,
   APIBaseInteraction,
   APIChatInputApplicationCommandInteractionData,
+  RESTPostAPIApplicationCommandsJSONBody,
   InteractionType,
 } from 'discord-api-types/v10';
 
 export type Options = APIApplicationCommandInteractionDataOption[];
 
-export type CommandEntity = RESTPostAPIChatInputApplicationCommandsJSONBody;
-export type CommandAction = (env: Env, option?: Options) => Promise<any>;
+export type CommandEntity = RESTPostAPIApplicationCommandsJSONBody;
+export type CommandAction = (
+  env: Env,
+  option?: Options,
+  data?: APIChatInputApplicationCommandInteractionData
+) => Promise<any>;
 
 export interface Command {
   entity: CommandEntity;

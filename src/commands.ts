@@ -33,4 +33,8 @@ export const commands: CommandEntity[] = [
       option.setName('id').setDescription('タイトルのID').setRequired(true)
     )
     .toJSON(),
+  new SlashCommandBuilder()
+    .setName('modal-test')
+    .setDescription('モーダルテスト')
+    .toJSON(),
 ];

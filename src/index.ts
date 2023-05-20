@@ -66,7 +66,6 @@ export default {
     const signature = request.headers.get('X-Signature-Ed25519') || '';
     const timestamp = request.headers.get('X-Signature-Timestamp') || '';
     const body = await request.clone().arrayBuffer();
-    console.log(signature, timestamp, env.DISCORD_PUBLIC_KEY);
     const isValidRequest = verifyKey(
       body,
       signature,

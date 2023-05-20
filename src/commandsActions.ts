@@ -75,23 +75,21 @@ const actions: CommandAction[] = [
   },
   //me-title
   async (env, options) => {
-    if (!options) {
-      console.log('optionsがありません');
-      return {
-        type: 4,
-        data: {
-          content: 'optionsがありません',
-        },
-      };
-    } else {
-      console.log('options');
-      console.log(options);
-    }
     return {
       type: 4,
       data: {
         content:
           'command: me-title\n payload:\n' + JSON.stringify(options, null, 2),
+      },
+    };
+  },
+  //modal-test
+  async (env, options) => {
+    return {
+      type: 4,
+      data: {
+        content:
+          'command: modal-test\n payload:\n' + JSON.stringify(options, null, 2),
       },
     };
   },
