@@ -53,6 +53,8 @@ router.post('/', async (request, env: Env) => {
       return new JsonResponse({ error: 'Unknown command' }, { status: 400 });
     }
   }
+  if (interaction.type === InteractionType.ModalSubmit) {
+  }
   console.error('Unknown Type');
   return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
 });
