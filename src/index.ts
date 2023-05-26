@@ -9,62 +9,80 @@ import {
   InteractionType,
   InteractionResponseType,
 } from 'discord-api-types/v10';
-import { Interaction } from './types';
+import { ACInteraction } from './types';
 
 class JsonResponse extends Response {
-  constructor(body: any, init?: ResponseInit) {
-    const jsonBody = JSON.stringify(body);
+  constructor( body: any, init?: ResponseInit ) {
+    const jsonBody = JSON.stringify( body );
     init = init || {
       headers: {
         'content-type': 'application/json;charset=UTF-8',
       },
     };
-    super(jsonBody, init);
+    super( jsonBody, init );
   }
 }
 
 const router = Router();
 
-router.get('/', (request, env) => {
-  return new Response(`👋 ${env.DISCORD_APPLICATION_ID}`);
-});
+router.get( '/', ( request, env ) => {
+  return new Response( `👋 ${ env.DISCORD_APPLICATION_ID }` );
+} );
 
-router.post('/', async (request, env: Env) => {
-  const interaction: Interaction = await request.json();
-  if (interaction.type === InteractionType.Ping) {
-    console.log('Handling Ping request');
-    return new JsonResponse({
+router.post( '/', async ( request, env: Env ) => {
+  const jsonBody = await request.json();
+  const _ixnType: InteractionType = jsonBody.type;
+  if ( _ixnType === InteractionType.Ping ) {
+    //ping
+    return new JsonResponse( {
       type: InteractionResponseType.Pong,
-    });
+    } );
   }
-  if (interaction.type === InteractionType.ApplicationCommand) {
-    //コマンド処理
+  if ( _ixnType === InteractionType.ApplicationCommand ) {
+    //application command
+    const interaction: ACInteraction = jsonBody;
     const command = commandsWithAction.find(
-      (c) =>
+      ( c ) =>
         c.entity.name.toLowerCase() === interaction.data?.name.toLowerCase()
     );
-    if (command && command.action) {
+    if ( command && command.action ) {
       //コマンド実行
-      console.log(`Handling command: ${command.entity.name}`);
-      return new JsonResponse(await command.action(env, interaction.data));
+      console.log( `Handling command: ${ command.entity.name }` );
+      return new JsonResponse( await command.action( env, interaction.data ) );
     } else {
       //コマンドなし
-      console.error('Unknown command');
-      return new JsonResponse({ error: 'Unknown command' }, { status: 400 });
+      console.error( 'Unknown command' );
+      return new JsonResponse( { error: 'Unknown command' }, { status: 400 } );
     }
   }
-  if (interaction.type === InteractionType.ModalSubmit) {
-  }
-  console.error('Unknown Type');
-  return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
-});
+  if ( _ixnType === InteractionType.ModalSubmit ) {
+    console.log( 'Handling ModalSubmit request' );
+    const data: any = jsonBody.data;
+    //write a json file
+    const json = JSON.stringify( data );
+    const filename = `test.json`;
+    return new JsonResponse( {
+      type: InteractionResponseType.ChannelMessageWithSource,
+      data: {
+        content: json,
+        allowed_mentions: {
+          parse: [],
+        },
+        flags: 64,
+      },
+    } );
 
-router.all('*', () => new Response('Not Found', { status: 404 }));
+  }
+  console.error( 'Unknown Type' );
+  return new JsonResponse( { error: 'Unknown Type' }, { status: 400 } );
+} );
+
+router.all( '*', () => new Response( 'Not Found', { status: 404 } ) );
 
 export default {
-  async fetch(request: Request, env: Env) {
-    const signature = request.headers.get('X-Signature-Ed25519') || '';
-    const timestamp = request.headers.get('X-Signature-Timestamp') || '';
+  async fetch ( request: Request, env: Env ) {
+    const signature = request.headers.get( 'X-Signature-Ed25519' ) || '';
+    const timestamp = request.headers.get( 'X-Signature-Timestamp' ) || '';
     const body = await request.clone().arrayBuffer();
     const isValidRequest = verifyKey(
       body,
@@ -72,9 +90,9 @@ export default {
       timestamp,
       env.DISCORD_PUBLIC_KEY
     );
-    if (!isValidRequest) {
-      return new Response('Invalid request signature', { status: 401 });
+    if ( !isValidRequest ) {
+      return new Response( 'Invalid request signature', { status: 401 } );
     }
-    return router.handle(request, env);
+    return router.handle( request, env );
   },
 };

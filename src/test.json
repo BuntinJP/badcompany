@@ -1,0 +1,25 @@
+{
+  "components": [
+    {
+      "components": [
+        {
+          "custom_id": "favoriteColorInput",
+          "type": 4,
+          "value": "aokitakumia"
+        }
+      ],
+      "type": 1
+    },
+    {
+      "components": [
+        {
+          "custom_id": "hobbiesInput",
+          "type": 4,
+          "value": "aokitakumi\n"
+        }
+      ],
+      "type": 1
+    }
+  ],
+  "custom_id": "myModal"
+}

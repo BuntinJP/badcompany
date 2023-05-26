@@ -20,7 +20,7 @@ export interface Command {
   action?: CommandAction;
 }
 
-export type Interaction = APIBaseInteraction<
+export type ACInteraction = APIBaseInteraction<
   InteractionType,
   APIChatInputApplicationCommandInteractionData
 >;
