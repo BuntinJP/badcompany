@@ -11,10 +11,6 @@ export const commands: CommandEntity[] = [
     .setDescription( 'ヘルプを表示します' )
     .toJSON(),
   new SlashCommandBuilder()
-    .setName( 'hello' )
-    .setDescription( '挨拶します' )
-    .toJSON(),
-  new SlashCommandBuilder()
     .setName( 'hnti' )
     .setDescription( 'E-Girlガチャ' )
     .toJSON(),
@@ -34,14 +30,17 @@ export const commands: CommandEntity[] = [
     )
     .toJSON(),
   new SlashCommandBuilder()
-    .setName( 'modal-test' )
-    .setDescription( 'モーダルテスト' )
-    .toJSON(),
-  new SlashCommandBuilder()
     .setName( 'me-fetch-mangarawjp' )
     .setDescription( '指定タイトルの指定話数をフェッチします。' )
     .addStringOption( ( option ) =>
       option.setName( 'url' ).setDescription( 'mangarawurl' ).setRequired( true )
     )
+    .addBooleanOption( ( option ) =>
+      option.setName( 'ifpush' ).setDescription( 'ここにDLするか' ).setRequired( false )
+    )
+    .toJSON(),
+  new SlashCommandBuilder()
+    .setName( 'defer-test' )
+    .setDescription( 'deferテスト' )
     .toJSON(),
 ];

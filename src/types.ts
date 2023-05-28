@@ -12,11 +12,12 @@ import {
   APIStringSelectComponent,
   APISelectMenuComponent,
   APIButtonComponent,
+  APIApplicationCommandInteractionDataBasicOption
 } from 'discord-api-types/v10';
-
 
 type ExtendedAPIModalActionRowComponet = APIModalActionRowComponent | APISelectMenuComponent | APIButtonComponent;
 
+export type BaseOption = APIApplicationCommandInteractionDataBasicOption;
 
 export type ExtendedAPIModalInteractionResponseCallbackData = {
   /**

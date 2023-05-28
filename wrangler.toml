@@ -6,3 +6,4 @@ node_compat = true
 
 [vars]
 VERSION = "1.0.1"
+SERVER_URL = "http://localhost:11150"
