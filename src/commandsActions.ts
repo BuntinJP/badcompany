@@ -25,29 +25,29 @@ const testurl = 'https://www.reddit.com/r/EGirls/hot.json';
 const info = `mode:"production"|"develop" => "debug\nserver:string => "manga.buntin.xyz\nstate:string => "running"\nversion:string => "0.0.1"\nuptime:string => "0:00:00"\n`;
 const actions: CommandAction[] = [
   //info
-  async (env) => ({
+  async ( env ) => ( {
     type: msg,
     data: {
       content: info,
     },
-  }),
+  } ),
   //help
-  async () => ({
+  async () => ( {
     type: msg,
     data: {
       content: 'ヘルプはこちら\n(https://github.com/BuntinJP/badcompany)',
     },
-  }),
+  } ),
   //hello
-  async () => ({
+  async () => ( {
     type: msg,
     data: {
       content: 'Hello, Cloudflare Worker!',
     },
-  }),
+  } ),
   //hnti
   async () => {
-    const imageUrl = await getImageUrl(testurl);
+    const imageUrl = await getImageUrl( testurl );
     return {
       type: msg,
       data: {
@@ -56,7 +56,7 @@ const actions: CommandAction[] = [
     };
   },
   //invite
-  async (env: any) => {
+  async ( env: any ) => {
     const applicationId = env.DISCORD_APPLICATION_ID;
     const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${applicationId}&scope=applications.commands`;
     return {
@@ -70,37 +70,50 @@ const actions: CommandAction[] = [
   //me-titles
   async () => {
     const directory: DirectoryOutbound = await (
-      await fetch('https://manga.buntin.xyz/directory')
+      await fetch( 'https://manga.buntin.xyz/directory' )
     ).json();
     const titles = directory.titles;
     return {
       type: msg,
       data: {
-        content: dc.genTable(titles),
+        content: dc.genTable( titles ),
       },
     };
   },
   //me-title
-  async (env, options) => {
+  async ( env, options ) => {
     return {
       type: msg,
       data: {
         content:
-          'command: me-title\n payload:\n' + JSON.stringify(options, null, 2),
+          'command: me-title\n payload:\n' + JSON.stringify( options, null, 2 ),
       },
     };
   },
   //modal-test
   async () => {
-    const tt = dcUtils.genModal('test','testmodal');
+    const tt = dcUtils.genModal( 'test', 'testmodal' );
     return {
-      type: modal,
-      data: tt,
+      type: msg,
+      data: {
+        content: 'sine'
+      }
     };
   },
+  //'me-fetch-mangarawjp.io'
+  async ( env, options ) => {
+    return {
+      type: msg,
+      data: {
+        content:
+          'command: me-fetch-mangarawjp\n payload:\n' +
+          JSON.stringify( options, null, 2 )
+      },
+    };
+  }
 ];
 
-export const commandsWithAction: Command[] = commands.map((command, index) => ({
+export const commandsWithAction: Command[] = commands.map( ( command, index ) => ( {
   entity: command,
-  action: actions[index],
-}));
+  action: actions[ index ],
+} ) );

@@ -45,7 +45,7 @@ export type ExtendedRESTPostAPIInteractionCallbackJSONBody = RESTPostAPIInteract
 export type CommandEntity = RESTPostAPIApplicationCommandsJSONBody;
 export type CommandAction = (
   env: Env,
-  data?: APIChatInputApplicationCommandInteractionData
+  data?: ACInteraction
 ) => Promise<ExtendedRESTPostAPIInteractionCallbackJSONBody>;
 
 export interface Command {

@@ -21,11 +21,6 @@
     "strict": true,
     "skipLibCheck": false
   },
-  "ts-node": {
-    "esm": true,
-    "require": ["tsconfig-paths/register"],
-    "experimentalSpecifierResolution": "node"
-  },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

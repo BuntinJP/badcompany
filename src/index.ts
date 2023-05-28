@@ -50,7 +50,7 @@ router.post( '/', async ( request, env: Env ) => {
     if ( command && command.action ) {
       //コマンド実行
       console.log( `Handling command: ${command.entity.name}` );
-      return new JsonResponse( await command.action( env, interaction.data ) );
+      return new JsonResponse( await command.action( env, interaction ) );
     } else {
       //コマンドなし
       console.error( 'Unknown command' );
