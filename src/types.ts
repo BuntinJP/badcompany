@@ -34,7 +34,7 @@ export type ExtendedAPIModalInteractionResponseCallbackData = {
   components: APIActionRowComponent<ExtendedAPIModalActionRowComponet>[];
 }
 
-export type ExtendedAPIModalInteractionResponse  = {
+export type ExtendedAPIModalInteractionResponse = {
   type: InteractionResponseType.Modal;
   data: ExtendedAPIModalInteractionResponseCallbackData;
 }
@@ -52,6 +52,17 @@ export type CommandAction = (
 export interface Command {
   entity: CommandEntity;
   action?: CommandAction;
+}
+
+export interface BC_GeneralPayload {
+  type: string;
+  eventInfo: {
+    guild_id: string;
+    channel_id: string;
+    token: string;
+    app_id: string;
+  }
+  data: any;
 }
 
 export type ACInteraction = APIBaseInteraction<

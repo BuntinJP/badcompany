@@ -5,9 +5,10 @@ import { commands } from './commands';
 import * as testModal from './modals/testModal.json';
 import * as dcUtils from './utils/discordUtils';
 import * as scUtils from './utils/scrapeUtils';
-import { ExtendedAPIModalInteractionResponse, BaseOption } from './types';
+import { ExtendedAPIModalInteractionResponse, BaseOption, BC_GeneralPayload } from './types';
 
 const msg = 4;
+const deffer = 5;
 const modal = 9;
 
 import * as dc from './utils/discordUtils';
@@ -33,7 +34,7 @@ const actions: CommandAction[] = [
     return {
       type: msg,
       data: {
-        content: `Cloudflare Worker Bot Client Version : ${env.VERSION}\n${await state.json()}`,
+        content: `Cloudflare Worker Bot Client Version : ${env.VERSION}\nServerStatus:\n${JSON.stringify( ( await state.json() ), null, 2 )}`,
       },
     }
   },
@@ -98,34 +99,65 @@ const actions: CommandAction[] = [
       data: {
         content: 'no options',
       },
-    }
+    };
+    //check url serquence
     let [ urlops, ifPushops ] = ops;
     const url = urlops.value as string;
-    const ifPush = ( !ifPushops?.value || ifPushops.value === 'false' ) ? false : true;
     const isValid = scUtils.checkUrl( ( url as unknown ) as string );
-    return {
+    if ( !isValid ) return {
       type: msg,
       data: {
         content:
-          `url: ${url}\nisValid: ${isValid}`
+          `url is invalid\nurl:'${url}'`,
       },
     };
-  },
-  //'defer-test'
-  async ( env, interaction ) => {
+    //create payload
     const id = interaction?.id;
     const token = interaction?.token;
+    const guild_id = interaction?.guild_id || '0';
+    const channel_id = interaction?.channel?.id || '0';
     if ( !id || !token ) return {
       type: msg,
       data: {
         content: 'id or token is empty',
       },
     }
-    const deferBody = {
-      type: 5,
+    const ifPush = ( !ifPushops?.value || ifPushops.value === 'false' ) ? false : true;
+    const pl: BC_GeneralPayload = {
+      type: ifPush ? 'deferred-fetch-push' : 'deferred-fetch',
+      eventInfo: {
+        guild_id: guild_id,
+        channel_id: channel_id,
+        token: token,
+        app_id: env.DISCORD_APPLICATION_ID,
+      },
+      data: {
+        content: 'deferred',
+      },
+    };
+    //check server
+    if ( !( await scUtils.checkMEserver( `${env.SERVER_URL}/version` ) ) ) {
+      return {
+        type: msg,
+        data: {
+          content: 'server is down',
+        },
+      };
     }
-    await dcUtils.respondDiscordInteraction( id, token, deferBody );
-    //10s wait
+    fetch( `${env.SERVER_URL}/badcompany`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify( pl ),
+    } );
+    //send defer
+    return {
+      type: deffer,
+    };
+  },
+  //'defer-test'
+  async ( env, interaction ) => {
     return {
       type: 5,
     }
