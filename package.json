@@ -13,7 +13,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "wrangler dev",
+    "start": "wrangler dev --remote",
     "deploy": "wrangler publish",
     "register": "ts-node ./src/register.ts",
     "register2": "tsc && node ./dist/register.js",

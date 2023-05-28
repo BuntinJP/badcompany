@@ -3,7 +3,8 @@ import { Command, CommandAction } from './types';
 import { commands } from './commands';
 //import { ModalBuilder } from 'discord.js';
 import * as testModal from './modals/testModal.json';
-import { Modaldata } from './types';
+import * as dcUtils from './utils/discordUtils';
+import { ExtendedAPIModalInteractionResponse } from './types';
 
 const msg = 4;
 const modal = 9;
@@ -91,7 +92,7 @@ const actions: CommandAction[] = [
   },
   //modal-test
   async () => {
-    const tt: Modaldata = testModal;
+    const tt = dcUtils.genModal('test','testmodal');
     return {
       type: modal,
       data: tt,
