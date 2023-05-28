@@ -1,21 +1,21 @@
-import { ExtendedAPIModalInteractionResponseCallbackData, ExtendedRESTPostAPIInteractionCallbackJSONBody } from '../types';
-import { sleep } from './scrapeUtils';
-export const genTable = ( a: string[] ) => {
+import {ExtendedAPIModalInteractionResponseCallbackData, ExtendedRESTPostAPIInteractionCallbackJSONBody} from '../types';
+import {sleep} from './scrapeUtils';
+export const genTable = (a: string[]) => {
   const iLen = a.length.toString().length;
-  const vLen = Math.max( ...a.map( ( x ) => x.length ) );
+  const vLen = Math.max(...a.map((x) => x.length));
   const sep = '-'.repeat(
-    Math.max( iLen, 'index'.length ) + Math.max( vLen, 'array[index]'.length ) + 7
+    Math.max(iLen, 'index'.length) + Math.max(vLen, 'array[index]'.length) + 7
   );
-  let tbl = `\n${sep}\n| ${'index'.padEnd( iLen )} | ${'array[index]'.padEnd(
+  let tbl = `\n${sep}\n| ${'index'.padEnd(iLen)} | ${'array[index]'.padEnd(
     vLen
   )} |\n${sep}\n`;
   a.forEach(
-    ( v, i ) => ( tbl += `| ${i.toString().padEnd( iLen )} | ${v.padEnd( vLen )} \n` )
+    (v, i) => (tbl += `| ${i.toString().padEnd(iLen)} | ${v.padEnd(vLen)} \n`)
   );
   return '```' + tbl + sep + '\n```';
 };
 
-export const genModal = ( title: string, custom_id: string ) => {
+export const genModal = (title: string, custom_id: string) => {
   //
   const t: ExtendedAPIModalInteractionResponseCallbackData = {
     title: title,
@@ -84,27 +84,27 @@ export const genModal = ( title: string, custom_id: string ) => {
   return tt;
 }
 
-export const respondDiscordInteraction = ( id: string, token: string, data: ExtendedRESTPostAPIInteractionCallbackJSONBody ) => {
-  return fetch( `https://discord.com/api/v10/interactions/${id}/${token}/callback`, {
+export const respondDiscordInteraction = (id: string, token: string, data: ExtendedRESTPostAPIInteractionCallbackJSONBody) => {
+  return fetch(`https://discord.com/api/v10/interactions/${id}/${token}/callback`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify( data ),
-  } );
+    body: JSON.stringify(data),
+  });
 }
 
-export const testDilaiedResponse = async ( app_id: string, token: string, data: ExtendedRESTPostAPIInteractionCallbackJSONBody ) => {
-  await sleep( 10000 );
-  await fetch( `https://discord.com/api/v10/webhooks/${app_id}/${token}/messages/@original`, {
+export const testDilaiedResponse = async (app_id: string, token: string, data: ExtendedRESTPostAPIInteractionCallbackJSONBody) => {
+  await sleep(10000);
+  await fetch(`https://discord.com/api/v10/webhooks/${app_id}/${token}/messages/@original`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify( {
+    body: JSON.stringify({
       content: 'delayed response',
-    } ),
+    }),
   },
   );
-  console.log( 'delayed response' );
+  console.log('delayed response');
 }

@@ -10,7 +10,7 @@ const getImageUrl = async (url: string) => {
         'buntin-bad-company:manga-eater-client:v1.0.0 (by /u/Buntin-LArchel)',
     },
   });
-  const data: { data: { children: any[] } } = await response.json();
+  const data: {data: {children: any[]}} = await response.json();
   const posts: string[] = data.data.children
     .map((post) => {
       if (post.is_gallery) {
@@ -24,8 +24,8 @@ const getImageUrl = async (url: string) => {
     })
     .filter((post: string) => !!post);
   const randomIndex = Math.floor(Math.random() * posts.length);
-  const randomPost = posts[randomIndex];
+  const randomPost = posts[ randomIndex ];
   return randomPost;
 };
 
-export { getImageUrl };
+export {getImageUrl};
