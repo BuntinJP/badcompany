@@ -1,18 +1,18 @@
-import {getImageUrl} from './utils/reddit';
-import {Command, CommandAction} from './types';
-import {commands} from './commands';
+import { getImageUrl } from './utils/reddit';
+import { Command, CommandAction } from './types';
+import { commands } from './commands';
 //import { ModalBuilder } from 'discord.js';
 import * as testModal from './modals/testModal.json';
 import * as dcUtils from './utils/discordUtils';
 import * as scUtils from './utils/scrapeUtils';
-import {ExtendedAPIModalInteractionResponse, BaseOption, BC_GeneralPayload} from './types';
+import { ExtendedAPIModalInteractionResponse, BaseOption, BC_GeneralPayload } from './types';
 
 const msg = 4;
 const deffer = 5;
 const modal = 9;
 
 import * as dc from './utils/discordUtils';
-import {InteractionResponseType} from 'discord.js';
+import { InteractionResponseType } from 'discord.js';
 
 interface Archive {
   title: string;
@@ -29,12 +29,25 @@ const info = `mode:"production"|"develop" => "debug\nserver:string => "manga.bun
 const actions: CommandAction[] = [
   //info
   async (env) => {
+    console.log('Handling info request');
+    //check server
+    if (!(await scUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
+      return {
+        type: msg,
+        data: {
+          content: 'server is down',
+        },
+      };
+    }
     const serverUrl = env.SERVER_URL;
-    const state = await fetch(`${serverUrl}/version/info`);
+    const state = await fetch(`${ serverUrl }/version/info`);
+    const info = await state.json();
+    const jsonString = JSON.stringify(info, null, 2);
+    console.log(jsonString);
     return {
       type: msg,
       data: {
-        content: `Cloudflare Worker Bot Client Version : ${env.VERSION}\nServerStatus:\n${JSON.stringify((await state.json()), null, 2)}`,
+        content: `Cloudflare Worker Bot Client Version : ${ env.VERSION }\nServer Status: \n${ jsonString }`,
       },
     }
   },
@@ -58,7 +71,7 @@ const actions: CommandAction[] = [
   //invite
   async (env) => {
     const applicationId = env.DISCORD_APPLICATION_ID;
-    const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${applicationId}&scope=applications.commands`;
+    const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${ applicationId }&scope=applications.commands`;
     return {
       type: msg,
       data: {
@@ -101,14 +114,14 @@ const actions: CommandAction[] = [
       },
     };
     //check url serquence
-    let [ urlops, ifPushops ] = ops;
+    let [urlops, ifPushops] = ops;
     const url = urlops.value as string;
     const isValid = scUtils.checkUrl((url as unknown) as string);
     if (!isValid) return {
       type: msg,
       data: {
         content:
-          `url is invalid\nurl:'${url}'`,
+          `url is invalid\nurl:'${ url }'`,
       },
     };
     //create payload
@@ -136,7 +149,7 @@ const actions: CommandAction[] = [
       },
     };
     //check server
-    if (!(await scUtils.checkMEserver(`${env.SERVER_URL}/version`))) {
+    if (!(await scUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
       return {
         type: msg,
         data: {
@@ -144,7 +157,7 @@ const actions: CommandAction[] = [
         },
       };
     }
-    fetch(`${env.SERVER_URL}/badcompany`, {
+    fetch(`${ env.SERVER_URL }/badcompany`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -164,7 +177,9 @@ const actions: CommandAction[] = [
   }
 ];
 
+console.log('commandsActions.ts' + actions.length);
+
 export const commandsWithAction: Command[] = commands.map((command, index) => ({
   entity: command,
-  action: actions[ index ],
+  action: actions[index],
 }));

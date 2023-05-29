@@ -1,5 +1,7 @@
-import {SlashCommandBuilder} from '@discordjs/builders';
-import {CommandEntity} from './types';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandEntity } from './types';
+
+
 
 export const commands: CommandEntity[] = [
   new SlashCommandBuilder()
@@ -44,3 +46,4 @@ export const commands: CommandEntity[] = [
     .setDescription('deferテスト')
     .toJSON(),
 ];
+console.log('commands.ts :' + commands.length);

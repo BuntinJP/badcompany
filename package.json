@@ -9,11 +9,11 @@
     "discord-api-types": "^0.37.42",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4",
-    "wrangler": "^2.20.0"
+    "wrangler": "3.0.1"
   },
   "private": true,
   "scripts": {
-    "start": "wrangler dev",
+    "start": "wrangler dev --remote",
     "deploy": "wrangler publish",
     "register": "node --loader ts-node/esm ./src/register.ts",
     "register2": "tsc && node ./dist/register.js",

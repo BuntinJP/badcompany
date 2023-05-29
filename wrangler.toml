@@ -6,5 +6,6 @@ node_compat = true
 
 [vars]
 VERSION = "1.0.1"
-SERVER_URL = "https://test.synthia-liz.com"
+#SERVER_URL = "https://test.synthia-liz.com"
+SERVER_URL = "https://test1.conbios.systems"
 #SERVER_URL = "https://manga.buntin.xyz"
