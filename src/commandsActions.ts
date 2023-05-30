@@ -24,8 +24,6 @@ interface DirectoryOutbound {
 }
 
 const testurl = 'https://www.reddit.com/r/EGirls/hot.json';
-
-const info = `mode:"production"|"develop" => "debug\nserver:string => "manga.buntin.xyz\nstate:string => "running"\nversion:string => "0.0.1"\nuptime:string => "0:00:00"\n`;
 const actions: CommandAction[] = [
   //info
   async (env) => {
@@ -145,7 +143,7 @@ const actions: CommandAction[] = [
         app_id: env.DISCORD_APPLICATION_ID,
       },
       data: {
-        content: 'deferred',
+        url: url,
       },
     };
     //check server
