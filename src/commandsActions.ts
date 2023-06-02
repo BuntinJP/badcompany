@@ -4,7 +4,7 @@ import { commands } from './commands';
 //import { ModalBuilder } from 'discord.js';
 import * as testModal from './modals/testModal.json';
 import * as dcUtils from './utils/discordUtils';
-import * as scUtils from './utils/scrapeUtils';
+import * as meUtils from './utils/meUtils';
 import { ExtendedAPIModalInteractionResponse, BaseOption, BC_GeneralPayload } from './types';
 
 const msg = 4;
@@ -14,13 +14,18 @@ const modal = 9;
 import * as dc from './utils/discordUtils';
 import { InteractionResponseType } from 'discord.js';
 
-interface Archive {
-  title: string;
-  episodes: string[];
-}
-interface DirectoryOutbound {
-  titles: string[];
-  outbound: Archive[];
+const down = {
+  type: msg,
+  data: {
+    content: 'server is down',
+  },
+};
+
+const err = {
+  type: msg,
+  data: {
+    content: 'error'
+  }
 }
 
 const testurl = 'https://www.reddit.com/r/EGirls/hot.json';
@@ -29,13 +34,8 @@ const actions: CommandAction[] = [
   async (env) => {
     console.log('Handling info request');
     //check server
-    if (!(await scUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
-      return {
-        type: msg,
-        data: {
-          content: 'server is down',
-        },
-      };
+    if (!(await meUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
+      return down;
     }
     const serverUrl = env.SERVER_URL;
     const state = await fetch(`${ serverUrl }/version/info`);
@@ -80,9 +80,7 @@ const actions: CommandAction[] = [
   },
   //me-titles
   async () => {
-    const directory: DirectoryOutbound = await (
-      await fetch('https://manga.buntin.xyz/directory')
-    ).json();
+    const directory = await meUtils.getDir();
     const titles = directory.titles;
     return {
       type: msg,
@@ -92,12 +90,20 @@ const actions: CommandAction[] = [
     };
   },
   //me-title
-  async (env, options) => {
+  async (env, interaction) => {
+    const options = interaction?.data?.options as BaseOption[];
+    const index = options[0].value as number;
+    const dir = await meUtils.getDir();
+    if (!index) {
+      return err;
+    }
+    const title = dir.titles[index];
+    const eps = dir.outbound[index].episodes.map((ep) => meUtils.trimZero(ep.split('-').shift() || 'err'));
     return {
       type: msg,
       data: {
         content:
-          'command: me-title\n payload:\n' + JSON.stringify(options, null, 2),
+          'command: me-title\n output:\n' + JSON.stringify(eps, null, 2),
       },
     };
   },
@@ -114,7 +120,7 @@ const actions: CommandAction[] = [
     //check url serquence
     let [urlops, ifPushops] = ops;
     const url = urlops.value as string;
-    const isValid = scUtils.checkUrl((url as unknown) as string);
+    const isValid = meUtils.checkUrl((url as unknown) as string);
     if (!isValid) return {
       type: msg,
       data: {
@@ -147,13 +153,8 @@ const actions: CommandAction[] = [
       },
     };
     //check server
-    if (!(await scUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
-      return {
-        type: msg,
-        data: {
-          content: 'server is down',
-        },
-      };
+    if (!(await meUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
+      return down;
     }
     fetch(`${ env.SERVER_URL }/badcompany`, {
       method: 'POST',

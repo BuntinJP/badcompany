@@ -1,4 +1,4 @@
-
+import { DirectoryOutbound } from '../types';
 
 /**
  * URLが適正かチェックする。適正の場合はtrueを返す。
@@ -22,5 +22,27 @@ export const checkMEserver = async (url: string) => {
   if (res.ok) return true;
   return false;
 }
+
+export const getDir = async () => {
+  return await (
+    await fetch('https://manga.buntin.xyz/directory')
+  ).json() as DirectoryOutbound;
+}
+
+export const trimZero = (str: string): string => {
+  while (str.startsWith('0')) {
+    str = str.slice(1);
+  }
+  if (str.startsWith('.')) {
+    str = '0' + str;
+  }
+  while (str.endsWith('0') && str.includes('.')) {
+    str = str.slice(0, -1);
+  }
+  if (str.endsWith('.')) {
+    str = str.slice(0, -1);
+  }
+  return str;
+};
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

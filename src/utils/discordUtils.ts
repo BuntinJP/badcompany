@@ -1,5 +1,5 @@
 import { ExtendedAPIModalInteractionResponseCallbackData, ExtendedRESTPostAPIInteractionCallbackJSONBody } from '../types';
-import { sleep } from './scrapeUtils';
+import { sleep } from './meUtils';
 export const genTable = (a: string[]) => {
   const iLen = a.length.toString().length;
   const vLen = Math.max(...a.map((x) => x.length));

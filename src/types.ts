@@ -69,3 +69,25 @@ export type ACInteraction = APIBaseInteraction<
   InteractionType,
   APIChatInputApplicationCommandInteractionData
 >;
+
+type BCTask = {
+  type: string;
+  url?: string;
+  id: string;
+  channelId?: string;
+};
+
+export type BCState = {
+  version: string;
+  queue: BCTask[];
+  isProcessing: boolean;
+};
+
+interface Archive {
+  title: string;
+  episodes: string[];
+}
+export interface DirectoryOutbound {
+  titles: string[];
+  outbound: Archive[];
+}
