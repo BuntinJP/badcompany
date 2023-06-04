@@ -4,7 +4,7 @@
  */
 
 import fs from 'fs';
-import {commands} from './commands.js';
+import { commands } from './commands.js';
 
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
 
