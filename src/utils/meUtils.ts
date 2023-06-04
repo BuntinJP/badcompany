@@ -1,4 +1,4 @@
-import { DirectoryOutbound } from '../types';
+import { DirectoryOutbound, BCState } from '../types';
 
 /**
  * URLが適正かチェックする。適正の場合はtrueを返す。
@@ -29,6 +29,12 @@ export const getDir = async () => {
   ).json() as DirectoryOutbound;
 }
 
+export const getBCstate = async () => {
+  return await (
+    await fetch('https://manga.buntin.xyz/version/bc')
+  ).json() as BCState;
+}
+
 export const trimZero = (str: string): string => {
   while (str.startsWith('0')) {
     str = str.slice(1);
@@ -44,5 +50,28 @@ export const trimZero = (str: string): string => {
   }
   return str;
 };
+
+export const trimedEpsByIndex = (dir: DirectoryOutbound, index: number) => {
+  return dir.outbound[index].episodes.map((ep) =>
+    trimZero(ep.split('-').shift() || 'err')
+  );
+}
+
+export const mePost = async (url: string, data: any) => {
+  /*   fetch(`${ env.SERVER_URL }/badcompany`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(pl),
+    }); */
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+}
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

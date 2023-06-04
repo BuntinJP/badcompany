@@ -5,7 +5,11 @@ import { commands } from './commands';
 import * as testModal from './modals/testModal.json';
 import * as dcUtils from './utils/discordUtils';
 import * as meUtils from './utils/meUtils';
-import { ExtendedAPIModalInteractionResponse, BaseOption, BC_GeneralPayload } from './types';
+import {
+  ExtendedAPIModalInteractionResponse,
+  BaseOption,
+  BC_GeneralPayload,
+} from './types';
 
 const msg = 4;
 const deffer = 5;
@@ -24,9 +28,9 @@ const down = {
 const err = {
   type: msg,
   data: {
-    content: 'error'
-  }
-}
+    content: 'error',
+  },
+};
 
 const testurl = 'https://www.reddit.com/r/EGirls/hot.json';
 const actions: CommandAction[] = [
@@ -47,7 +51,7 @@ const actions: CommandAction[] = [
       data: {
         content: `Cloudflare Worker Bot Client Version : ${ env.VERSION }\nServer Status: \n${ jsonString }`,
       },
-    }
+    };
   },
   //help
   async () => ({
@@ -98,12 +102,13 @@ const actions: CommandAction[] = [
       return err;
     }
     const title = dir.titles[index];
-    const eps = dir.outbound[index].episodes.map((ep) => meUtils.trimZero(ep.split('-').shift() || 'err'));
+    const eps = dir.outbound[index].episodes.map((ep) =>
+      meUtils.trimZero(ep.split('-').shift() || 'err')
+    );
     return {
       type: msg,
       data: {
-        content:
-          'command: me-title\n output:\n' + JSON.stringify(eps, null, 2),
+        content: 'command: me-title\n output:\n' + JSON.stringify(eps, null, 2),
       },
     };
   },
@@ -111,35 +116,38 @@ const actions: CommandAction[] = [
   async (env, interaction) => {
     const data = interaction?.data;
     const ops = data?.options as BaseOption[];
-    if (!ops) return {
-      type: msg,
-      data: {
-        content: 'no options',
-      },
-    };
+    if (!ops)
+      return {
+        type: msg,
+        data: {
+          content: 'no options',
+        },
+      };
     //check url serquence
     let [urlops, ifPushops] = ops;
     const url = urlops.value as string;
-    const isValid = meUtils.checkUrl((url as unknown) as string);
-    if (!isValid) return {
-      type: msg,
-      data: {
-        content:
-          `url is invalid\nurl:'${ url }'`,
-      },
-    };
+    const isValid = meUtils.checkUrl(url as unknown as string);
+    if (!isValid)
+      return {
+        type: msg,
+        data: {
+          content: `url is invalid\nurl:'${ url }'`,
+        },
+      };
     //create payload
     const id = interaction?.id;
     const token = interaction?.token;
     const guild_id = interaction?.guild_id || '0';
     const channel_id = interaction?.channel?.id || '0';
-    if (!id || !token) return {
-      type: msg,
-      data: {
-        content: 'id or token is empty',
-      },
-    }
-    const ifPush = (!ifPushops?.value || ifPushops.value === 'false') ? false : true;
+    if (!id || !token)
+      return {
+        type: msg,
+        data: {
+          content: 'id or token is empty',
+        },
+      };
+    const ifPush =
+      !ifPushops?.value || ifPushops.value === 'false' ? false : true;
     const pl: BC_GeneralPayload = {
       type: ifPush ? 'deferred-fetch-push' : 'deferred-fetch',
       eventInfo: {
@@ -168,12 +176,70 @@ const actions: CommandAction[] = [
       type: deffer,
     };
   },
+  //me-get
+  async (env, interaction) => {
+    if (!(await meUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
+      return down;
+    }
+    const options = interaction?.data?.options as BaseOption[];
+    if (!options || options.length === 0) return err;
+    const [titleops, epops] = options;
+    const title = titleops.value as number;
+    const ep = epops.value as string;
+    const dir = await meUtils.getDir();
+    if (dir.titles.length < title)
+      return {
+        type: msg,
+        data: {
+          content: 'タイトル指定が不適です',
+        },
+      };
+    const eps = meUtils.trimedEpsByIndex(dir, title);
+    const epIndex = eps.indexOf(ep);
+    if (epIndex === -1)
+      return {
+        type: msg,
+        data: {
+          content: 'エピソード指定が不適です',
+        },
+      };
+    const bc_state = await meUtils.getBCstate();
+    const id = interaction?.id;
+    const token = interaction?.token || '';
+    const guild_id = interaction?.guild_id || '';
+    const channel_id = interaction?.channel?.id || '';
+    const pl: BC_GeneralPayload = {
+      type: 'me-get',
+      eventInfo: {
+        guild_id: guild_id,
+        channel_id: channel_id,
+        token: token,
+        app_id: env.DISCORD_APPLICATION_ID,
+      },
+      data: {
+        title: title,
+        ep: epIndex,
+      },
+    };
+    if (
+      bc_state.isProcessing === true &&
+      bc_state.queue.filter((q) => q.type === 'me-get').length > 0
+    ) {
+      pl.data.isdefer = false;
+      meUtils.mePost(`${ env.SERVER_URL }/badcompany/get`, pl);
+    }
+    pl.data.isdefer = true;
+    meUtils.mePost(`${ env.SERVER_URL }/badcompany/get`, pl);
+    return {
+      type: deffer,
+    }
+  },
   //'defer-test'
   async (env, interaction) => {
     return {
       type: 5,
-    }
-  }
+    };
+  },
 ];
 
 console.log('commandsActions.ts' + actions.length);

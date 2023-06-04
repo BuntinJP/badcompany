@@ -41,6 +41,7 @@ export const commands: CommandEntity[] = [
       option.setName('ifpush').setDescription('ここにDLするか').setRequired(false)
     )
     .toJSON(),
+  new SlashCommandBuilder().setName('me-get').setDescription('指定タイトルの指定話数を取得します。').addIntegerOption((option) => option.setName('id').setDescription('タイトルのID').setRequired(true)).addStringOption((option) => option.setName('ep').setDescription('episode').setRequired(true)).toJSON(),
   new SlashCommandBuilder()
     .setName('defer-test')
     .setDescription('deferテスト')
