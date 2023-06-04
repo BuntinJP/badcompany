@@ -9,7 +9,11 @@ export const checkUrl = (url: string) => {
   if (!url) return false;
   try {
     const urlObj = new URL(url);
-    if (urlObj.pathname.includes('-raw-free') || urlObj.pathname.includes('chapters')) return true;
+    if (
+      urlObj.pathname.includes('-raw-free') ||
+      urlObj.pathname.includes('chapters')
+    )
+      return true;
     return false;
   } catch (e) {
     return false;
@@ -21,19 +25,17 @@ export const checkMEserver = async (url: string) => {
   const res = await fetch(url);
   if (res.ok) return true;
   return false;
-}
+};
 
-export const getDir = async () => {
-  return await (
-    await fetch('https://manga.buntin.xyz/directory')
-  ).json() as DirectoryOutbound;
-}
+export const getDir = async (url: string) => {
+  return (await (await fetch(`${url}/directory`)).json()) as DirectoryOutbound;
+};
 
 export const getBCstate = async () => {
-  return await (
+  return (await (
     await fetch('https://manga.buntin.xyz/version/bc')
-  ).json() as BCState;
-}
+  ).json()) as BCState;
+};
 
 export const trimZero = (str: string): string => {
   while (str.startsWith('0')) {
@@ -55,7 +57,7 @@ export const trimedEpsByIndex = (dir: DirectoryOutbound, index: number) => {
   return dir.outbound[index].episodes.map((ep) =>
     trimZero(ep.split('-').shift() || 'err')
   );
-}
+};
 
 export const mePost = async (url: string, data: any) => {
   /*   fetch(`${ env.SERVER_URL }/badcompany`, {
@@ -72,6 +74,7 @@ export const mePost = async (url: string, data: any) => {
     },
     body: JSON.stringify(data),
   });
-}
+};
 
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

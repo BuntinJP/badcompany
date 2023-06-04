@@ -2,14 +2,14 @@
  * @fileoverview Cloudflare Worker メインエントリー
  */
 
-import {Router} from 'itty-router';
-import {verifyKey} from 'discord-interactions';
-import {commandsWithAction} from './commandsActions';
+import { Router } from 'itty-router';
+import { verifyKey } from 'discord-interactions';
+import { commandsWithAction } from './commandsActions';
 import {
   InteractionType,
   InteractionResponseType,
 } from 'discord-api-types/v10';
-import {ACInteraction} from './types';
+import { ACInteraction } from './types';
 
 class JsonResponse extends Response {
   constructor(body: any, init?: ResponseInit) {
@@ -54,7 +54,7 @@ router.post('/', async (request, env: Env) => {
     } else {
       //コマンドなし
       console.error('Unknown command');
-      return new JsonResponse({error: 'Unknown command'}, {status: 400});
+      return new JsonResponse({ error: 'Unknown command' }, { status: 400 });
     }
   }
   //modal submit
@@ -73,7 +73,6 @@ router.post('/', async (request, env: Env) => {
         flags: 64,
       },
     });
-
   }
   //message component
   if (_ixnType === InteractionType.MessageComponent) {
@@ -94,16 +93,16 @@ router.post('/', async (request, env: Env) => {
     });
   }
   console.error('Unknown Type');
-  return new JsonResponse({error: 'Unknown Type'}, {status: 400});
+  return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
 });
 
-router.all('*', () => new Response('Not Found', {status: 404}));
+router.all('*', () => new Response('Not Found', { status: 404 }));
 
 export default {
   async fetch(request: Request, env: Env) {
     const signature = request.headers.get('X-Signature-Ed25519') || '';
     const timestamp = request.headers.get('X-Signature-Timestamp') || '';
-    const body = await request.clone().arrayBuffer();
+    const body = await request.text();
     const isValidRequest = verifyKey(
       body,
       signature,
@@ -111,7 +110,7 @@ export default {
       env.DISCORD_PUBLIC_KEY
     );
     if (!isValidRequest) {
-      return new Response('Invalid request signature', {status: 401});
+      return new Response('Invalid request signature', { status: 401 });
     }
     return router.handle(request, env);
   },

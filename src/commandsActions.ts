@@ -38,18 +38,18 @@ const actions: CommandAction[] = [
   async (env) => {
     console.log('Handling info request');
     //check server
-    if (!(await meUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
+    if (!(await meUtils.checkMEserver(`${env.SERVER_URL}/version`))) {
       return down;
     }
     const serverUrl = env.SERVER_URL;
-    const state = await fetch(`${ serverUrl }/version/info`);
+    const state = await fetch(`${serverUrl}/version/info`);
     const info = await state.json();
     const jsonString = JSON.stringify(info, null, 2);
     console.log(jsonString);
     return {
       type: msg,
       data: {
-        content: `Cloudflare Worker Bot Client Version : ${ env.VERSION }\nServer Status: \n${ jsonString }`,
+        content: `Cloudflare Worker Bot Client Version : ${env.VERSION}\nServer Status: \n${jsonString}`,
       },
     };
   },
@@ -73,7 +73,7 @@ const actions: CommandAction[] = [
   //invite
   async (env) => {
     const applicationId = env.DISCORD_APPLICATION_ID;
-    const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${ applicationId }&scope=applications.commands`;
+    const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${applicationId}&scope=applications.commands`;
     return {
       type: msg,
       data: {
@@ -83,8 +83,8 @@ const actions: CommandAction[] = [
     };
   },
   //me-titles
-  async () => {
-    const directory = await meUtils.getDir();
+  async (env) => {
+    const directory = await meUtils.getDir(env.SERVER_URL);
     const titles = directory.titles;
     return {
       type: msg,
@@ -97,7 +97,7 @@ const actions: CommandAction[] = [
   async (env, interaction) => {
     const options = interaction?.data?.options as BaseOption[];
     const index = options[0].value as number;
-    const dir = await meUtils.getDir();
+    const dir = await meUtils.getDir(env.SERVER_URL);
     if (!index) {
       return err;
     }
@@ -131,7 +131,7 @@ const actions: CommandAction[] = [
       return {
         type: msg,
         data: {
-          content: `url is invalid\nurl:'${ url }'`,
+          content: `url is invalid\nurl:'${url}'`,
         },
       };
     //create payload
@@ -161,10 +161,10 @@ const actions: CommandAction[] = [
       },
     };
     //check server
-    if (!(await meUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
+    if (!(await meUtils.checkMEserver(`${env.SERVER_URL}/version`))) {
       return down;
     }
-    fetch(`${ env.SERVER_URL }/badcompany`, {
+    fetch(`${env.SERVER_URL}/badcompany`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -178,7 +178,7 @@ const actions: CommandAction[] = [
   },
   //me-get
   async (env, interaction) => {
-    if (!(await meUtils.checkMEserver(`${ env.SERVER_URL }/version`))) {
+    if (!(await meUtils.checkMEserver(`${env.SERVER_URL}/version`))) {
       return down;
     }
     const options = interaction?.data?.options as BaseOption[];
@@ -186,7 +186,7 @@ const actions: CommandAction[] = [
     const [titleops, epops] = options;
     const title = titleops.value as number;
     const ep = epops.value as string;
-    const dir = await meUtils.getDir();
+    const dir = await meUtils.getDir(env.SERVER_URL);
     if (dir.titles.length < title)
       return {
         type: msg,
@@ -226,13 +226,13 @@ const actions: CommandAction[] = [
       bc_state.queue.filter((q) => q.type === 'me-get').length > 0
     ) {
       pl.data.isdefer = false;
-      meUtils.mePost(`${ env.SERVER_URL }/badcompany/get`, pl);
+      meUtils.mePost(`${env.SERVER_URL}/badcompany/get`, pl);
     }
     pl.data.isdefer = true;
-    meUtils.mePost(`${ env.SERVER_URL }/badcompany/get`, pl);
+    meUtils.mePost(`${env.SERVER_URL}/badcompany/get`, pl);
     return {
       type: deffer,
-    }
+    };
   },
   //'defer-test'
   async (env, interaction) => {
