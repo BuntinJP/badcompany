@@ -34,8 +34,114 @@ router.post('/', async (request, env) => {
   if (!isValid || !interaction) {
     return new JsonResponse({ error: 'Invalid Request' }, { status: 400 });
   }
-  const _ixnType: InteractionType = interaction.type;
-  //ping
+  console.log(JSON.stringify(interaction, null, 2));
+  const handlers: Record<
+    InteractionType,
+    (env: Env, interaction: ACInteraction) => Promise<JsonResponse>
+  > = {
+    [InteractionType.Ping]: async () => {
+      console.log('Handling Ping request');
+      return new JsonResponse({
+        type: InteractionResponseType.Pong,
+      });
+    },
+    [InteractionType.ApplicationCommand]: async (env, interaction) => {
+      console.log(JSON.stringify(interaction, null, 2));
+      console.log('Handling ApplicationCommand request');
+      const command = commandsWithAction.find(
+        (c) =>
+          c.entity.name.toLowerCase() === interaction.data?.name.toLowerCase()
+      );
+      if (command && command.action) {
+        //コマンド実行
+        console.log(`Handling command: ${command.entity.name}`);
+        return new JsonResponse(await command.action(env, interaction));
+      } else {
+        //コマンドなし
+        console.error('Unknown command');
+        return new JsonResponse({ error: 'Unknown command' }, { status: 400 });
+      }
+    },
+    [InteractionType.ModalSubmit]: async (env, interaction) => {
+      console.log('Handling ModalSubmit request');
+      const data = interaction.data;
+      //write a json file
+      const json = JSON.stringify(data);
+      return new JsonResponse({
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+          content: json,
+          allowed_mentions: {
+            parse: [],
+          },
+          flags: 64,
+        },
+      });
+    },
+    [InteractionType.MessageComponent]: async (env, interaction) => {
+      console.log('Handling ModalSubmit request');
+      const data = interaction.data;
+      //write a json file
+      const json = JSON.stringify(data);
+      return new JsonResponse({
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+          content: json,
+          allowed_mentions: {
+            parse: [],
+          },
+          flags: 64,
+        },
+      });
+    },
+    [InteractionType.ApplicationCommandAutocomplete]: async (
+      env,
+      interaction
+    ) => {
+      console.log('Handling ApplicationCommandAutocomplete request');
+      return new JsonResponse({
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+          content: 'ApplicationCommandAutocomplete',
+          allowed_mentions: {
+            parse: [],
+          },
+          flags: 64,
+        },
+      });
+    },
+  };
+  const handler = handlers[interaction.type];
+  if (handler) {
+    return handler(env, interaction);
+  } else {
+    return new JsonResponse(
+      { error: 'Unknown interaction type' },
+      { status: 400 }
+    );
+  }
+});
+
+router.all('*', () => new Response('Not Found', { status: 404 }));
+
+export default {
+  async fetch(req: Request, env: Env) {
+    return router.handle(req, env);
+  },
+};
+
+const parseReqest = async (req: IRequest, env: Env) => {
+  const sig = req.headers.get('X-Signature-Ed25519') || undefined;
+  const ts = req.headers.get('X-Signature-Timestamp') || undefined;
+  const b = await req.text();
+  const isValid = sig && ts && verifyKey(b, sig, ts, env.DISCORD_PUBLIC_KEY);
+  if (!isValid) {
+    return { isValid: false } as Validability;
+  }
+  return { isValid: true, interaction: JSON.parse(b) as ACInteraction };
+};
+
+/*   //ping
   if (_ixnType === InteractionType.Ping) {
     console.log('Handling Ping request');
     return new JsonResponse({
@@ -93,26 +199,4 @@ router.post('/', async (request, env) => {
         flags: 64,
       },
     });
-  }
-  console.error('Unknown Type');
-  return new JsonResponse({ error: 'Unknown Type' }, { status: 400 });
-});
-
-router.all('*', () => new Response('Not Found', { status: 404 }));
-
-export default {
-  async fetch(req: Request, env: Env) {
-    return router.handle(req, env);
-  },
-};
-
-const parseReqest = async (req: IRequest, env: Env) => {
-  const sig = req.headers.get('X-Signature-Ed25519') || undefined;
-  const ts = req.headers.get('X-Signature-Timestamp') || undefined;
-  const b = await req.text();
-  const isValid = sig && ts && verifyKey(b, sig, ts, env.DISCORD_PUBLIC_KEY);
-  if (!isValid) {
-    return { isValid: false } as Validability;
-  }
-  return { isValid: true, interaction: JSON.parse(b) as ACInteraction };
-};
+  } */

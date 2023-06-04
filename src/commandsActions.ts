@@ -98,7 +98,7 @@ const actions: CommandAction[] = [
     const options = interaction?.data?.options as BaseOption[];
     const index = options[0].value as number;
     const dir = await meUtils.getDir(env.SERVER_URL);
-    if (!index) {
+    if (dir.titles.length < index) {
       return err;
     }
     const title = dir.titles[index];
@@ -108,7 +108,11 @@ const actions: CommandAction[] = [
     return {
       type: msg,
       data: {
-        content: 'command: me-title\n output:\n' + JSON.stringify(eps, null, 2),
+        content: `index \`${index}\`\n\ntitle \`${title}\`\n\navailable episodes\n${'```json'}\n${JSON.stringify(
+          eps,
+          null,
+          2
+        )}\n${'```'}`,
       },
     };
   },
