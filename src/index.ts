@@ -2,14 +2,14 @@
  * @fileoverview Cloudflare Worker メインエントリー
  */
 
-import { Router } from 'itty-router';
+import { Router, IRequest } from 'itty-router';
 import { verifyKey } from 'discord-interactions';
 import { commandsWithAction } from './commandsActions';
 import {
   InteractionType,
   InteractionResponseType,
 } from 'discord-api-types/v10';
-import { ACInteraction } from './types';
+import { ACInteraction, Validability } from './types';
 
 class JsonResponse extends Response {
   constructor(body: any, init?: ResponseInit) {
@@ -29,9 +29,12 @@ router.get('/', (request, env) => {
   return new Response(`👋 ${JSON.stringify(env, null, 4)}`);
 });
 
-router.post('/', async (request, env: Env) => {
-  const jsonBody = await request.json();
-  const _ixnType: InteractionType = jsonBody.type;
+router.post('/', async (request, env) => {
+  const { isValid, interaction } = await parseReqest(request, env);
+  if (!isValid || !interaction) {
+    return new JsonResponse({ error: 'Invalid Request' }, { status: 400 });
+  }
+  const _ixnType: InteractionType = interaction.type;
   //ping
   if (_ixnType === InteractionType.Ping) {
     console.log('Handling Ping request');
@@ -42,7 +45,6 @@ router.post('/', async (request, env: Env) => {
   //application command
   if (_ixnType === InteractionType.ApplicationCommand) {
     console.log('Handling ApplicationCommand request');
-    const interaction: ACInteraction = jsonBody;
     const command = commandsWithAction.find(
       (c) =>
         c.entity.name.toLowerCase() === interaction.data?.name.toLowerCase()
@@ -60,7 +62,7 @@ router.post('/', async (request, env: Env) => {
   //modal submit
   if (_ixnType === InteractionType.ModalSubmit) {
     console.log('Handling ModalSubmit request');
-    const data: any = jsonBody.data;
+    const data = interaction.data;
     //write a json file
     const json = JSON.stringify(data);
     return new JsonResponse({
@@ -78,7 +80,7 @@ router.post('/', async (request, env: Env) => {
   if (_ixnType === InteractionType.MessageComponent) {
     //
     console.log('Handling MessageComponent request');
-    const data: any = jsonBody.data;
+    const data = interaction.data;
     //write a json file
     const json = JSON.stringify(data);
     return new JsonResponse({
@@ -99,19 +101,18 @@ router.post('/', async (request, env: Env) => {
 router.all('*', () => new Response('Not Found', { status: 404 }));
 
 export default {
-  async fetch(request: Request, env: Env) {
-    const signature = request.headers.get('X-Signature-Ed25519') || '';
-    const timestamp = request.headers.get('X-Signature-Timestamp') || '';
-    const body = await request.text();
-    const isValidRequest = verifyKey(
-      body,
-      signature,
-      timestamp,
-      env.DISCORD_PUBLIC_KEY
-    );
-    if (!isValidRequest) {
-      return new Response('Invalid request signature', { status: 401 });
-    }
-    return router.handle(request, env);
+  async fetch(req: Request, env: Env) {
+    return router.handle(req, env);
   },
+};
+
+const parseReqest = async (req: IRequest, env: Env) => {
+  const sig = req.headers.get('X-Signature-Ed25519') || undefined;
+  const ts = req.headers.get('X-Signature-Timestamp') || undefined;
+  const b = await req.text();
+  const isValid = sig && ts && verifyKey(b, sig, ts, env.DISCORD_PUBLIC_KEY);
+  if (!isValid) {
+    return { isValid: false } as Validability;
+  }
+  return { isValid: true, interaction: JSON.parse(b) as ACInteraction };
 };

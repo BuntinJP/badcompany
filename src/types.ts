@@ -12,10 +12,13 @@ import {
   APIStringSelectComponent,
   APISelectMenuComponent,
   APIButtonComponent,
-  APIApplicationCommandInteractionDataBasicOption
+  APIApplicationCommandInteractionDataBasicOption,
 } from 'discord-api-types/v10';
 
-type ExtendedAPIModalActionRowComponet = APIModalActionRowComponent | APISelectMenuComponent | APIButtonComponent;
+type ExtendedAPIModalActionRowComponet =
+  | APIModalActionRowComponent
+  | APISelectMenuComponent
+  | APIButtonComponent;
 
 export type BaseOption = APIApplicationCommandInteractionDataBasicOption;
 
@@ -32,14 +35,16 @@ export type ExtendedAPIModalInteractionResponseCallbackData = {
    * Between 1 and 5 (inclusive) components that make up the modal
    */
   components: APIActionRowComponent<ExtendedAPIModalActionRowComponet>[];
-}
+};
 
 export type ExtendedAPIModalInteractionResponse = {
   type: InteractionResponseType.Modal;
   data: ExtendedAPIModalInteractionResponseCallbackData;
-}
+};
 
-export type ExtendedRESTPostAPIInteractionCallbackJSONBody = RESTPostAPIInteractionCallbackJSONBody | ExtendedAPIModalInteractionResponse;
+export type ExtendedRESTPostAPIInteractionCallbackJSONBody =
+  | RESTPostAPIInteractionCallbackJSONBody
+  | ExtendedAPIModalInteractionResponse;
 
 //export type Options = APIApplicationCommandInteractionDataOption[];
 
@@ -61,7 +66,7 @@ export interface BC_GeneralPayload {
     channel_id: string;
     token: string;
     app_id: string;
-  }
+  };
   data: any;
 }
 
@@ -90,4 +95,9 @@ interface Archive {
 export interface DirectoryOutbound {
   titles: string[];
   outbound: Archive[];
+}
+
+export interface Validability {
+  isValid: boolean;
+  interaction?: ACInteraction;
 }
