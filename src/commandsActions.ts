@@ -229,8 +229,15 @@ const actions: CommandAction[] = [
       bc_state.isProcessing === true &&
       bc_state.queue.filter((q) => q.type === 'me-get').length > 0
     ) {
+      //処理中かつキューがある場合。
       pl.data.isdefer = false;
       meUtils.mePost(`${env.SERVER_URL}/badcompany/get`, pl);
+      return {
+        type: msg,
+        data: {
+          content: 'キューに追加されました。しばらくお待ちください。',
+        },
+      };
     }
     pl.data.isdefer = true;
     meUtils.mePost(`${env.SERVER_URL}/badcompany/get`, pl);

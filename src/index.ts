@@ -26,7 +26,7 @@ class JsonResponse extends Response {
 const router = Router();
 
 router.get('/', (request, env) => {
-  return new Response(`👋 ${JSON.stringify(env, null, 4)}`);
+  return new Response(`👋`);
 });
 
 router.post('/', async (request, env) => {
